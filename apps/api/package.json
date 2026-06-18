@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/express": "^5.0.6",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "@repo/store": "workspace:*",
+    "@repo/typescript-config": "workspace:*"
   }
 }
