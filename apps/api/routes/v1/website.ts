@@ -1,37 +1,46 @@
 import express, { Router } from "express";
 import { prismaClient } from "@repo/store/client";
+import { authMiddleware } from "../../middleware/auth";
 
 const router: Router = express.Router();
 
-// GET /api/v1/website - get all websites
-router.get("/", async (_req, res) => {
-  const websites = await prismaClient.website.findMany();
-  res.json(websites);
+// POST /api/v1/website - create a website to monitor
+router.post("/", authMiddleware, async (req, res) => {
+    if (!req.body.url) {
+        res.status(411).json({ message: "URL is required" });
+        return;
+    }
+
+    const website = await prismaClient.website.create({
+        data: {
+            url: req.body.url,
+            timeAdded: new Date(),
+            user_id: req.userId!,
+        },
+    });
+
+    res.json({ id: website.id });
 });
 
-// POST /api/v1/website - add a website to monitor
-router.post("/", async (req, res) => {
-  const { url } = req.body;
+// GET /api/v1/website/status/:websiteId - get status of a website
+router.get("/status/:websiteId", authMiddleware, async (req, res) => {
+    const website = await prismaClient.website.findFirst({
+        where: {
+            user_id: req.userId!,
+            id: req.params.websiteId,
+        },
+    });
 
-  const website = await prismaClient.website.create({
-    data: {
-      url,
-      timeAdded: new Date(),
-    },
-  });
+    if (!website) {
+        res.status(409).json({ message: "Website not found" });
+        return;
+    }
 
-  res.json(website);
-});
-
-// DELETE /api/v1/website/:id - remove a website
-router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
-
-  await prismaClient.website.delete({
-    where: { id },
-  });
-
-  res.json({ message: "Website removed" });
+    res.json({
+        url: website.url,
+        id: website.id,
+        user_id: website.user_id,
+    });
 });
 
 export default router;
