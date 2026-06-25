@@ -44,7 +44,7 @@ router.post("/signin", async (req, res) => {
     }
 
     const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET!);
-    res.json({ jwt: token });
+    res.json({ token });
 });
 
 export default router;

@@ -13,9 +13,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^16.5.0",
+    "pg": "^8.13.3",
     "prisma": "^7.8.0"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "@types/pg": "^8.11.13"
   }
 }
